@@ -1,11 +1,10 @@
+# Starter pipeline
 trigger:
   branches:
     include:
       - main
-
 pool:
   vmImage: 'ubuntu-latest'
-
 jobs:
 - job: Build
   steps:
