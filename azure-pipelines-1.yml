@@ -2,7 +2,6 @@
 trigger:
   - main
 
-# Define the variables
 variables:
   TF_VAR_CREATE_BLACK: ''
   TF_VAR_CREATE_RED: ''
@@ -10,11 +9,11 @@ variables:
   TF_VAR_WEB_AMI_BLACK: ''
   TF_VAR_WEB_AMI_RED: ''
 
-pool:
-  vmImage: 'ubuntu-latest'
+# Use self-hosted agent pool instead of hosted
+pool: 
+  name: Default  # Use your self-hosted agent pool name
 
 steps:
-  # Print all variables for verification
   - script: |
       echo "Running with variables:"
       echo "TF_VAR_CREATE_BLACK: $(TF_VAR_CREATE_BLACK)"
