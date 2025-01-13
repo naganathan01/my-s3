@@ -1,0 +1,63 @@
+# azure-pipelines.yml
+trigger:
+  - main  # Triggers pipeline on changes to main branch
+
+# Define variables that can be used throughout the pipeline
+variables:
+  - name: TF_VAR_CREATE_BLACK
+    value: ''
+  - name: TF_VAR_CREATE_RED
+    value: ''
+  - name: TF_VAR_ELB_TARGET
+    value: ''
+  - name: TF_VAR_WEB_AMI_BLACK
+    value: ''
+  - name: TF_VAR_WEB_AMI_RED
+    value: ''
+
+# Pool defines the agent where the pipeline will run
+pool:
+  vmImage: 'ubuntu-latest'
+
+# Stages organize pipeline tasks
+stages:
+  - stage: Build
+    jobs:
+      - job: BuildJob
+        steps:
+          # Print all variables for debugging
+          - bash: |
+              echo "CREATE_BLACK: $(TF_VAR_CREATE_BLACK)"
+              echo "CREATE_RED: $(TF_VAR_CREATE_RED)"
+              echo "ELB_TARGET: $(TF_VAR_ELB_TARGET)"
+              echo "WEB_AMI_BLACK: $(TF_VAR_WEB_AMI_BLACK)"
+              echo "WEB_AMI_RED: $(TF_VAR_WEB_AMI_RED)"
+            displayName: 'Print Variables'
+
+          # Example task to run some commands
+          - script: |
+              echo "Building project..."
+              # Add your build commands here
+            displayName: 'Build Project'
+
+  - stage: Test
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: TestJob
+        steps:
+          - script: |
+              echo "Running tests..."
+              # Add your test commands here
+            displayName: 'Run Tests'
+
+  - stage: Deploy
+    dependsOn: Test
+    condition: succeeded()
+    jobs:
+      - job: DeployJob
+        steps:
+          - script: |
+              echo "Deploying..."
+              # Add your deployment commands here
+            displayName: 'Deploy'
