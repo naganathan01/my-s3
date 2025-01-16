@@ -1,23 +1,10 @@
 trigger:
   - main
 
-variables:
-  - name: APPLICATION
-    value: $[variables.APPLICATION]
-  - name: DEPLOY_VERSION
-    value: $[variables.DEPLOY_VERSION]
-  - name: ENVIRONMENT
-    value: $[variables.ENVIRONMENT]
-  - name: TF_VAR_CREATE_BLACK
-    value: $[variables.TF_VAR_CREATE_BLACK]
-  - name: TF_VAR_WEB_AMI_BLACK
-    value: $[variables.TF_VAR_WEB_AMI_BLACK]
-  - name: TF_VAR_CREATE_RED
-    value: $[variables.TF_VAR_CREATE_RED]
-  - name: TF_VAR_WEB_AMI_RED
-    value: $[variables.TF_VAR_WEB_AMI_RED]
-  - name: TF_VAR_ELB_TARGET
-    value: $[variables.TF_VAR_ELB_TARGET]
+# Don't define the variables section since we're using pipeline variables
+# variables:
+#   - name: APPLICATION
+#     value: $[variables.APPLICATION]
 
 pool:
   name: Default
@@ -43,18 +30,21 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        # Example of using the variables
-        $appName = "$(APPLICATION)"           # Will be "MyApp"
-        $version = "$(DEPLOY_VERSION)"        # Will be "1.0.0"
-        $env = "$(ENVIRONMENT)"               # Will be "Production"
+        # Using the variables directly
+        $appName = "$(APPLICATION)"
+        $version = "$(DEPLOY_VERSION)"
+        $env = "$(ENVIRONMENT)"
+        $createBlack = "$(TF_VAR_CREATE_BLACK)"
         
-        Write-Host "Deploying $appName version $version to $env environment"
+        Write-Host "Processing variables:"
+        Write-Host "App Name: $appName"
+        Write-Host "Version: $version"
+        Write-Host "Environment: $env"
+        Write-Host "Create Black: $createBlack"
         
-        # Check if black deployment is enabled
-        if ("$(TF_VAR_CREATE_BLACK)" -eq "Yes") {
+        # Example of conditional logic
+        if ($createBlack -eq "Yes") {
             Write-Host "Black deployment is enabled"
-            # Add your black deployment logic here
+        } else {
+            Write-Host "Black deployment is not enabled"
         }
-        
-        # You can use these variables in subsequent tasks or commands
-        Write-Host "##vso[task.setvariable variable=ProcessedAppName]$appName"
