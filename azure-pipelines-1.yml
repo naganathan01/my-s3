@@ -4,6 +4,11 @@ trigger:
 pool:
   name: Default
 
+variables:
+- name: myReadOnlyVar
+  value: myValue
+  readonly: true
+
 steps:
   - task: PowerShell@2
     displayName: 'Print Build Variables'
