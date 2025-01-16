@@ -1,11 +1,6 @@
 trigger:
   - main
 
-# Don't define the variables section since we're using pipeline variables
-# variables:
-#   - name: APPLICATION
-#     value: $[variables.APPLICATION]
-
 pool:
   name: Default
 
@@ -16,25 +11,58 @@ steps:
       targetType: 'inline'
       script: |
         Write-Host "Running with variables:"
-        Write-Host "APPLICATION: $(APPLICATION)"
-        Write-Host "DEPLOY_VERSION: $(DEPLOY_VERSION)"
-        Write-Host "ENVIRONMENT: $(ENVIRONMENT)"
-        Write-Host "TF_VAR_CREATE_BLACK: $(TF_VAR_CREATE_BLACK)"
-        Write-Host "TF_VAR_WEB_AMI_BLACK: $(TF_VAR_WEB_AMI_BLACK)"
-        Write-Host "TF_VAR_CREATE_RED: $(TF_VAR_CREATE_RED)"
-        Write-Host "TF_VAR_WEB_AMI_RED: $(TF_VAR_WEB_AMI_RED)"
-        Write-Host "TF_VAR_ELB_TARGET: $(TF_VAR_ELB_TARGET)"
+        
+        # Function to safely get variable value
+        function Get-VarValue {
+            param($varName)
+            $value = [Environment]::GetEnvironmentVariable($varName)
+            if ([string]::IsNullOrEmpty($value)) {
+                return "(not set)"
+            }
+            return $value
+        }
+        
+        # Print all variables with error handling
+        $variables = @(
+            'APPLICATION',
+            'DEPLOY_VERSION',
+            'ENVIRONMENT',
+            'TF_VAR_CREATE_BLACK',
+            'TF_VAR_WEB_AMI_BLACK',
+            'TF_VAR_CREATE_RED',
+            'TF_VAR_WEB_AMI_RED',
+            'TF_VAR_ELB_TARGET'
+        )
+        
+        foreach ($var in $variables) {
+            $value = Get-VarValue $var
+            Write-Host "$var: $value"
+        }
 
   - task: PowerShell@2
     displayName: 'Process Variables'
+    continueOnError: true
     inputs:
       targetType: 'inline'
       script: |
-        # Using the variables directly
-        $appName = "$(APPLICATION)"
-        $version = "$(DEPLOY_VERSION)"
-        $env = "$(ENVIRONMENT)"
-        $createBlack = "$(TF_VAR_CREATE_BLACK)"
+        # Function to get variable value with default
+        function Get-VarValue {
+            param(
+                $varName,
+                $default = "(not set)"
+            )
+            $value = [Environment]::GetEnvironmentVariable($varName)
+            if ([string]::IsNullOrEmpty($value)) {
+                return $default
+            }
+            return $value
+        }
+        
+        # Process variables safely
+        $appName = Get-VarValue 'APPLICATION' 'DefaultApp'
+        $version = Get-VarValue 'DEPLOY_VERSION' '1.0.0'
+        $env = Get-VarValue 'ENVIRONMENT' 'Development'
+        $createBlack = Get-VarValue 'TF_VAR_CREATE_BLACK' 'No'
         
         Write-Host "Processing variables:"
         Write-Host "App Name: $appName"
