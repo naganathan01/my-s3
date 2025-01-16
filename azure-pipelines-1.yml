@@ -2,16 +2,22 @@ trigger:
   - main
 
 variables:
+  - name: APPLICATION
+    value: $[variables.APPLICATION]
+  - name: DEPLOY_VERSION
+    value: $[variables.DEPLOY_VERSION]
+  - name: ENVIRONMENT
+    value: $[variables.ENVIRONMENT]
   - name: TF_VAR_CREATE_BLACK
     value: $[variables.TF_VAR_CREATE_BLACK]
-  - name: TF_VAR_CREATE_RED
-    value: $[variables.TF_VAR_CREATE_RED]
-  - name: TF_VAR_ELB_TARGET
-    value: $[variables.TF_VAR_ELB_TARGET]
   - name: TF_VAR_WEB_AMI_BLACK
     value: $[variables.TF_VAR_WEB_AMI_BLACK]
+  - name: TF_VAR_CREATE_RED
+    value: $[variables.TF_VAR_CREATE_RED]
   - name: TF_VAR_WEB_AMI_RED
     value: $[variables.TF_VAR_WEB_AMI_RED]
+  - name: TF_VAR_ELB_TARGET
+    value: $[variables.TF_VAR_ELB_TARGET]
 
 pool:
   name: Default
@@ -23,28 +29,32 @@ steps:
       targetType: 'inline'
       script: |
         Write-Host "Running with variables:"
+        Write-Host "APPLICATION: $(APPLICATION)"
+        Write-Host "DEPLOY_VERSION: $(DEPLOY_VERSION)"
+        Write-Host "ENVIRONMENT: $(ENVIRONMENT)"
         Write-Host "TF_VAR_CREATE_BLACK: $(TF_VAR_CREATE_BLACK)"
-        Write-Host "TF_VAR_CREATE_RED: $(TF_VAR_CREATE_RED)"
-        Write-Host "TF_VAR_ELB_TARGET: $(TF_VAR_ELB_TARGET)"
         Write-Host "TF_VAR_WEB_AMI_BLACK: $(TF_VAR_WEB_AMI_BLACK)"
+        Write-Host "TF_VAR_CREATE_RED: $(TF_VAR_CREATE_RED)"
         Write-Host "TF_VAR_WEB_AMI_RED: $(TF_VAR_WEB_AMI_RED)"
+        Write-Host "TF_VAR_ELB_TARGET: $(TF_VAR_ELB_TARGET)"
 
   - task: PowerShell@2
-    displayName: 'Build Process'
+    displayName: 'Process Variables'
     inputs:
       targetType: 'inline'
       script: |
-        Write-Host "Starting build process..."
+        # Example of using the variables
+        $appName = "$(APPLICATION)"           # Will be "MyApp"
+        $version = "$(DEPLOY_VERSION)"        # Will be "1.0.0"
+        $env = "$(ENVIRONMENT)"               # Will be "Production"
         
-        # Example of using the variables in your build process
-        if ([string]::IsNullOrEmpty("$(TF_VAR_CREATE_BLACK)")) {
-          Write-Host "TF_VAR_CREATE_BLACK is not set"
-        } else {
-          Write-Host "TF_VAR_CREATE_BLACK is set to: $(TF_VAR_CREATE_BLACK)"
+        Write-Host "Deploying $appName version $version to $env environment"
+        
+        # Check if black deployment is enabled
+        if ("$(TF_VAR_CREATE_BLACK)" -eq "Yes") {
+            Write-Host "Black deployment is enabled"
+            # Add your black deployment logic here
         }
         
-        if ([string]::IsNullOrEmpty("$(TF_VAR_CREATE_RED)")) {
-          Write-Host "TF_VAR_CREATE_RED is not set"
-        } else {
-          Write-Host "TF_VAR_CREATE_RED is set to: $(TF_VAR_CREATE_RED)"
-        }
+        # You can use these variables in subsequent tasks or commands
+        Write-Host "##vso[task.setvariable variable=ProcessedAppName]$appName"
