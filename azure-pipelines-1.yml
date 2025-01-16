@@ -5,9 +5,7 @@ pool:
   name: Default
 
 variables:
-- name: myReadOnlyVar
-  value: myValue
-  readonly: true
+  - group: varisble-group-nathan
 
 steps:
   - task: PowerShell@2
