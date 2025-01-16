@@ -15,62 +15,46 @@ steps:
         # Function to safely get variable value
         function Get-VarValue {
             param($varName)
-            $value = [Environment]::GetEnvironmentVariable($varName)
-            if ([string]::IsNullOrEmpty($value)) {
+            try {
+                $value = (Get-Item env:$varName).Value
+                if ([string]::IsNullOrEmpty($value)) {
+                    return "(not set)"
+                }
+                return $value
+            }
+            catch {
                 return "(not set)"
             }
-            return $value
         }
         
-        # Print all variables with error handling
-        $variables = @(
-            'APPLICATION',
-            'DEPLOY_VERSION',
-            'ENVIRONMENT',
-            'TF_VAR_CREATE_BLACK',
-            'TF_VAR_WEB_AMI_BLACK',
-            'TF_VAR_CREATE_RED',
-            'TF_VAR_WEB_AMI_RED',
-            'TF_VAR_ELB_TARGET'
-        )
-        
-        foreach ($var in $variables) {
-            $value = Get-VarValue $var
-            Write-Host "$var: $value"
-        }
+        # Print each variable separately to avoid formatting issues
+        Write-Host "APPLICATION:" (Get-VarValue 'APPLICATION')
+        Write-Host "DEPLOY_VERSION:" (Get-VarValue 'DEPLOY_VERSION')
+        Write-Host "ENVIRONMENT:" (Get-VarValue 'ENVIRONMENT')
+        Write-Host "TF_VAR_CREATE_BLACK:" (Get-VarValue 'TF_VAR_CREATE_BLACK')
+        Write-Host "TF_VAR_WEB_AMI_BLACK:" (Get-VarValue 'TF_VAR_WEB_AMI_BLACK')
+        Write-Host "TF_VAR_CREATE_RED:" (Get-VarValue 'TF_VAR_CREATE_RED')
+        Write-Host "TF_VAR_WEB_AMI_RED:" (Get-VarValue 'TF_VAR_WEB_AMI_RED')
+        Write-Host "TF_VAR_ELB_TARGET:" (Get-VarValue 'TF_VAR_ELB_TARGET')
 
   - task: PowerShell@2
     displayName: 'Process Variables'
-    continueOnError: true
     inputs:
       targetType: 'inline'
       script: |
-        # Function to get variable value with default
-        function Get-VarValue {
-            param(
-                $varName,
-                $default = "(not set)"
-            )
-            $value = [Environment]::GetEnvironmentVariable($varName)
-            if ([string]::IsNullOrEmpty($value)) {
-                return $default
-            }
-            return $value
-        }
-        
-        # Process variables safely
-        $appName = Get-VarValue 'APPLICATION' 'DefaultApp'
-        $version = Get-VarValue 'DEPLOY_VERSION' '1.0.0'
-        $env = Get-VarValue 'ENVIRONMENT' 'Development'
-        $createBlack = Get-VarValue 'TF_VAR_CREATE_BLACK' 'No'
+        # Process variables with safe retrieval
+        $appName = (Get-Item env:APPLICATION -ErrorAction SilentlyContinue).Value
+        $version = (Get-Item env:DEPLOY_VERSION -ErrorAction SilentlyContinue).Value
+        $env = (Get-Item env:ENVIRONMENT -ErrorAction SilentlyContinue).Value
+        $createBlack = (Get-Item env:TF_VAR_CREATE_BLACK -ErrorAction SilentlyContinue).Value
         
         Write-Host "Processing variables:"
-        Write-Host "App Name: $appName"
-        Write-Host "Version: $version"
-        Write-Host "Environment: $env"
-        Write-Host "Create Black: $createBlack"
+        Write-Host "App Name:" $appName
+        Write-Host "Version:" $version
+        Write-Host "Environment:" $env
+        Write-Host "Create Black:" $createBlack
         
-        # Example of conditional logic
+        # Example of conditional logic with safe checking
         if ($createBlack -eq "Yes") {
             Write-Host "Black deployment is enabled"
         } else {
