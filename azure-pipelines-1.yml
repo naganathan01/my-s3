@@ -26,5 +26,4 @@ steps:
   # Add your build steps here
   - script: |
       echo "Starting build process..."
-      # Add your build commands here
     displayName: 'Build Process'
