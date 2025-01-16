@@ -5,7 +5,12 @@ pool:
   name: Default
 
 variables:
-  - group: varisble-group-nathan
+ - name: projectName
+   value: contoso
+
+
+
+
 
 steps:
   - task: PowerShell@2
@@ -31,6 +36,8 @@ steps:
         }
         
         # Print each variable separately to avoid formatting issues
+        echo $(projectName)
+
         Write-Host "APPLICATION:" (Get-VarValue 'APPLICATION')
         Write-Host "DEPLOY_VERSION:" (Get-VarValue 'DEPLOY_VERSION')
         Write-Host "ENVIRONMENT:" (Get-VarValue 'ENVIRONMENT')
@@ -50,6 +57,7 @@ steps:
         $version = (Get-Item env:DEPLOY_VERSION -ErrorAction SilentlyContinue).Value
         $env = (Get-Item env:ENVIRONMENT -ErrorAction SilentlyContinue).Value
         $createBlack = (Get-Item env:TF_VAR_CREATE_BLACK -ErrorAction SilentlyContinue).Value
+
         
         Write-Host "Processing variables:"
         Write-Host "App Name:" $appName
