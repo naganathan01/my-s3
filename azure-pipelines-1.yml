@@ -11,38 +11,38 @@ variables:
 
 
 
-
 steps:
   - task: PowerShell@2
     displayName: 'Print Build Variables'
     inputs:
       targetType: 'inline'
       script: |
-        Write-Host "Running with variables:"
-        
-        # Function to safely get variable value
-        function Get-VarValue {
-            param($varName)
-            try {
-                $value = (Get-Item env:$varName).Value
-                if ([string]::IsNullOrEmpty($value)) {
-                    return "(not set)"
-                }
-                return $value
-            }
-            catch {
-                return "(not set)"
-            }
-        }
-        
-        # Print each variable separately to avoid formatting issues
-        echo $(projectName)
+        # Use full path to PowerShell
+        & "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -Command {
+          Write-Host "Running with variables:"
+          
+          function Get-VarValue {
+              param($varName)
+              try {
+                  $value = (Get-Item env:$varName).Value
+                  if ([string]::IsNullOrEmpty($value)) {
+                      return "(not set)"
+                  }
+                  return $value
+              }
+              catch {
+                  return "(not set)"
+              }
+          }
+          
+          echo $(projectName)
 
-        Write-Host "APPLICATION:" (Get-VarValue 'APPLICATION')
-        Write-Host "DEPLOY_VERSION:" (Get-VarValue 'DEPLOY_VERSION')
-        Write-Host "ENVIRONMENT:" (Get-VarValue 'ENVIRONMENT')
-        Write-Host "TF_VAR_CREATE_BLACK:" (Get-VarValue 'TF_VAR_CREATE_BLACK')
-        Write-Host "TF_VAR_WEB_AMI_BLACK:" (Get-VarValue 'TF_VAR_WEB_AMI_BLACK')
-        Write-Host "TF_VAR_CREATE_RED:" (Get-VarValue 'TF_VAR_CREATE_RED')
-        Write-Host "TF_VAR_WEB_AMI_RED:" (Get-VarValue 'TF_VAR_WEB_AMI_RED')
-        Write-Host "TF_VAR_ELB_TARGET:" (Get-VarValue 'TF_VAR_ELB_TARGET')
+          Write-Host "APPLICATION:" (Get-VarValue 'APPLICATION')
+          Write-Host "DEPLOY_VERSION:" (Get-VarValue 'DEPLOY_VERSION')
+          Write-Host "ENVIRONMENT:" (Get-VarValue 'ENVIRONMENT')
+          Write-Host "TF_VAR_CREATE_BLACK:" (Get-VarValue 'TF_VAR_CREATE_BLACK')
+          Write-Host "TF_VAR_WEB_AMI_BLACK:" (Get-VarValue 'TF_VAR_WEB_AMI_BLACK')
+          Write-Host "TF_VAR_CREATE_RED:" (Get-VarValue 'TF_VAR_CREATE_RED')
+          Write-Host "TF_VAR_WEB_AMI_RED:" (Get-VarValue 'TF_VAR_WEB_AMI_RED')
+          Write-Host "TF_VAR_ELB_TARGET:" (Get-VarValue 'TF_VAR_ELB_TARGET')
+        }
