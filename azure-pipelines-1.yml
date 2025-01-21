@@ -46,28 +46,3 @@ steps:
         Write-Host "TF_VAR_CREATE_RED:" (Get-VarValue 'TF_VAR_CREATE_RED')
         Write-Host "TF_VAR_WEB_AMI_RED:" (Get-VarValue 'TF_VAR_WEB_AMI_RED')
         Write-Host "TF_VAR_ELB_TARGET:" (Get-VarValue 'TF_VAR_ELB_TARGET')
-
-  - task: PowerShell@2
-    displayName: 'Process Variables'
-    inputs:
-      targetType: 'inline'
-      script: |
-        # Process variables with safe retrieval
-        $appName = (Get-Item env:APPLICATION -ErrorAction SilentlyContinue).Value
-        $version = (Get-Item env:DEPLOY_VERSION -ErrorAction SilentlyContinue).Value
-        $env = (Get-Item env:ENVIRONMENT -ErrorAction SilentlyContinue).Value
-        $createBlack = (Get-Item env:TF_VAR_CREATE_BLACK -ErrorAction SilentlyContinue).Value
-
-        
-        Write-Host "Processing variables:"
-        Write-Host "App Name:" $appName
-        Write-Host "Version:" $version
-        Write-Host "Environment:" $env
-        Write-Host "Create Black:" $createBlack
-        
-        # Example of conditional logic with safe checking
-        if ($createBlack -eq "Yes") {
-            Write-Host "Black deployment is enabled"
-        } else {
-            Write-Host "Black deployment is not enabled"
-        }
