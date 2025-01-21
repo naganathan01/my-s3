@@ -9,40 +9,16 @@ variables:
    value: contoso
 
 
-
-
 steps:
-  - task: PowerShell@2
+  - bash: |
+      echo "Running with variables:"
+      echo "projectName: $(projectName)"
+      echo "APPLICATION: $APPLICATION"
+      echo "DEPLOY_VERSION: $DEPLOY_VERSION"
+      echo "ENVIRONMENT: $ENVIRONMENT"
+      echo "TF_VAR_CREATE_BLACK: $TF_VAR_CREATE_BLACK"
+      echo "TF_VAR_WEB_AMI_BLACK: $TF_VAR_WEB_AMI_BLACK"
+      echo "TF_VAR_CREATE_RED: $TF_VAR_CREATE_RED"
+      echo "TF_VAR_WEB_AMI_RED: $TF_VAR_WEB_AMI_RED"
+      echo "TF_VAR_ELB_TARGET: $TF_VAR_ELB_TARGET"
     displayName: 'Print Build Variables'
-    inputs:
-      targetType: 'inline'
-      script: |
-        # Use full path to PowerShell
-        & "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -Command {
-          Write-Host "Running with variables:"
-          
-          function Get-VarValue {
-              param($varName)
-              try {
-                  $value = (Get-Item env:$varName).Value
-                  if ([string]::IsNullOrEmpty($value)) {
-                      return "(not set)"
-                  }
-                  return $value
-              }
-              catch {
-                  return "(not set)"
-              }
-          }
-          
-          echo $(projectName)
-
-          Write-Host "APPLICATION:" (Get-VarValue 'APPLICATION')
-          Write-Host "DEPLOY_VERSION:" (Get-VarValue 'DEPLOY_VERSION')
-          Write-Host "ENVIRONMENT:" (Get-VarValue 'ENVIRONMENT')
-          Write-Host "TF_VAR_CREATE_BLACK:" (Get-VarValue 'TF_VAR_CREATE_BLACK')
-          Write-Host "TF_VAR_WEB_AMI_BLACK:" (Get-VarValue 'TF_VAR_WEB_AMI_BLACK')
-          Write-Host "TF_VAR_CREATE_RED:" (Get-VarValue 'TF_VAR_CREATE_RED')
-          Write-Host "TF_VAR_WEB_AMI_RED:" (Get-VarValue 'TF_VAR_WEB_AMI_RED')
-          Write-Host "TF_VAR_ELB_TARGET:" (Get-VarValue 'TF_VAR_ELB_TARGET')
-        }
