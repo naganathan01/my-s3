@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Cricket Match Summary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="last-update">Last Updated: <span id="last-updated">Loading...</span></div>
+            <div class="refresh-countdown">Next refresh in <span id="countdown">3</span>s</div>
+        </div>
+        
+        <div id="loading" class="loading">Loading match data...</div>
+        
+        <div id="match-content" style="display: none;">
+            <!-- Teams display section with logos -->
+            <div class="teams-container">
+                <div class="team-logo" id="team1-container">
+                    <img id="team1-logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgEMirAmSelGzQqwMqkzMifgCNy9asa4lGjk7tFe7WlVAQ3NU7eGj8nP0c-NRXNY6ZN5FgrDJV0k_UjOLa8rUHJDfEzFsj9qxgL_DxfB0y4RlFli0AnCxNqWXZ9wCATAZ1FBoZafwsUWddYNpVOyBEAxK7yIdLy4OkVjkUMEDErfWKE_54Rt2WW9iXL/w271-h400/Original%20Royal%20Challengers%20Bangalore%20PNG-SVG%20File%20Download%20Free%20Download.png" alt="Team 1">
+                    <div class="team-name" id="team1-name">Team 1</div>
+                    <div class="current-score" id="team1-score">N/A</div>
+                </div>
+                
+                <div class="vs-container">
+                    <div id="vs-text">VS</div>
+                </div>
+                
+                <div class="team-logo" id="team2-container">
+                    <img id="team2-logo" src="/api/placeholder/150/150" alt="Team 2">
+                    <div class="team-name" id="team2-name">Team 2</div>
+                    <div class="current-score" id="team2-score">N/A</div>
+                </div>
+            </div>
+            
+            <!-- First row with match details -->
+            <div class="section match-details">
+                <div class="section-title">MATCH DETAILS</div>
+                <div class="data-row" id="series">Series: <span id="series-name">Loading...</span></div>
+                <div class="data-row" id="match-desc">Match: <span id="match-description">Loading...</span></div>
+                <div class="data-row" id="toss">Toss: <span id="toss-result">Loading...</span></div>
+            </div>
+            
+            <div class="section innings-details">
+                <div class="section-title">INNINGS DETAILS</div>
+                <div id="innings-scores"></div>
+                <div class="data-row" id="target">Target: <span id="target-runs">--</span></div>
+                <div class="data-row" id="runs-required">Needed: <span id="req-runs">--</span></div>
+                <div class="data-row" id="req-rate">RRR: <span id="req-run-rate" class="required-rate">--</span></div>
+                <div class="match-status" id="match-status">Loading...</div>
+            </div>
+            
+            <!-- Second row with batting and bowling -->
+            <div class="section batting-details">
+                <div class="section-title">CURRENT BATTING</div>
+                <div class="batsman">
+                    <div class="name striker">
+                        <span id="striker-name">Loading...</span> *
+                    </div>
+                    <div class="stats">
+                        <span id="striker-runs">--</span> (<span id="striker-balls">--</span>)
+                    </div>
+                </div>
+                <div class="batsman">
+                    <div class="name">
+                        <span id="non-striker-name">Loading...</span>
+                    </div>
+                    <div class="stats">
+                        <span id="non-striker-runs">--</span> (<span id="non-striker-balls">--</span>)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="bowling-details">
+                    <div class="section-title">CURRENT BOWLING</div>
+                    <div class="bowler">
+                        <div class="name">
+                            <span id="bowler-name">Loading...</span>
+                        </div>
+                        <div class="stats">
+                            <span id="bowler-overs">--</span>-<span id="bowler-runs">--</span>-<span id="bowler-wickets">--</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recent-performance">
+                    <div class="section-title">RECENT PERFORMANCE</div>
+                    <div id="recent-performance">Loading...</div>
+                </div>
+            </div>
+            
+            <!-- Current over section -->
+            <div class="section current-over-section">
+                <div class="section-title">CURRENT OVER</div>
+                <div id="current-over-balls">
+                    <!-- This will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <button id="refresh-button" class="refresh-button">Refresh Now</button>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
