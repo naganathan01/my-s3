@@ -1,0 +1,24 @@
+trigger:
+  - main
+
+pool:
+  name: Default
+
+variables:
+ - name: projectName
+   value: contoso
+
+
+steps:
+  - bash: |
+      echo "Running with variables:"
+      echo "projectName: $(projectName)"
+      echo "APPLICATION: $APPLICATION"
+      echo "DEPLOY_VERSION: $DEPLOY_VERSION"
+      echo "ENVIRONMENT: $ENVIRONMENT"
+      echo "TF_VAR_CREATE_BLACK: $TF_VAR_CREATE_BLACK"
+      echo "TF_VAR_WEB_AMI_BLACK: $TF_VAR_WEB_AMI_BLACK"
+      echo "TF_VAR_CREATE_RED: $TF_VAR_CREATE_RED"
+      echo "TF_VAR_WEB_AMI_RED: $TF_VAR_WEB_AMI_RED"
+      echo "TF_VAR_ELB_TARGET: $TF_VAR_ELB_TARGET"
+    displayName: 'Print Build Variables'
